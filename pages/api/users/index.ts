@@ -1,17 +1,17 @@
-import axios from 'axios'
+import { PrismaClient, users } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { User } from './types/user';
+
+const prisma = new PrismaClient();
 
 export default async function handler (
   req: NextApiRequest,
-  res: NextApiResponse<User>
+  res: NextApiResponse<users[]>
 ) {
   const data = await fetchUsers();
   res.status(200).json(data);
 }
 
-const fetchUsers = async (): Promise<User> => {
-  const res = await axios.get('https://jsonplaceholder.typicode.com/users');
-  const users = res.data;
-  return users;
+const fetchUsers = async () => {
+  const allUsers = await prisma.users.findMany();
+  return allUsers;
 }
